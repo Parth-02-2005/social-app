@@ -1,7 +1,7 @@
   import { User } from "@/models/user.model.js";
   import { loginResponseSchema, registerResponseSchema, type RegisterResponse, type LoginBody, type RegisterBody } from "@/schema/auth.schema.js";
-  import { ApiError } from "../../utils/apiError.js";
-  import { generateToken } from "../../utils/jwt.js";
+  import { ApiError } from "../utils/apiError.js";
+  import { generateToken } from "../utils/jwt.js";
 
 
   export class AuthenticationService {

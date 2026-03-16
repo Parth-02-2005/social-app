@@ -2,7 +2,7 @@ import { loginResponseSchema, loginSchemaBody, registerSchemaBody, registerRespo
 import { AuthenticationService } from "@/services/authentication.service.js";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { setCookie } from "hono/cookie";
-import { generateToken } from "../../utils/jwt.js";
+import { generateToken } from "../utils/jwt.js";
 
 export const authenticationRouter = new OpenAPIHono();
 const authenticationService = new AuthenticationService();

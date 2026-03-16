@@ -3,15 +3,23 @@ import { useState, useEffect } from "react"
 import ChatLayout from "../../components/chats/ChatLayout"
 import ChatSidebar from "../../components/chats/ChatSidebar"
 import ChatWindow from "../../components/chats/ChatWindow"
-import { isAuthenticated } from "#/lib/auth"
+
 
 export const Route = createFileRoute("/chat/")({
   beforeLoad: () => {
-    if (!isAuthenticated()) {
+
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const token = localStorage.getItem("token")
+
+    if (!token) {
       throw redirect({
-        to: "/",
+        to: "/"
       })
     }
+
   },
   component: ChatPage,
 })

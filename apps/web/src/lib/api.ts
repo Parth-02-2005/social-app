@@ -51,3 +51,12 @@ export const getAllUsers = async () => {
     throw new Error(error?.response?.data?.message || "Failed to fetch users")
   }
 }
+
+export const getUserChatHistory = async (otherUserId: string) => {
+  try {
+    const response = await api.get(`/messages/${otherUserId}`)
+    return response.data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to fetch messages")
+  }
+}

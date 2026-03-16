@@ -6,19 +6,23 @@ export class MessageService {
 
   async getMessages(currentUserId: string, otherUserId: string) {
 
-    const messages = await Message.find({
+     const sender = new Types.ObjectId(currentUserId);
+    const receiver = new Types.ObjectId(otherUserId);
+
+        const messages = await Message.find({
       $or: [
-        {
-          senderId: new Types.ObjectId(currentUserId),
-          receiverId: new Types.ObjectId(otherUserId),
-        },
-        {
-          senderId: new Types.ObjectId(otherUserId),
-          receiverId: new Types.ObjectId(currentUserId),
-        },
+        { senderId: sender, receiverId: receiver },
+        { senderId: receiver, receiverId: sender },
       ],
     })
-    .sort({ createdAt: 1 });
+    .sort({ createdAt: 1 })
+
+      // console.log("currentUserId:", currentUserId, typeof currentUserId);
+      // console.log("otherUserId:", otherUserId, typeof otherUserId);
+      // console.log("QUERY sender:", sender, "receiver:", receiver);
+      // console.log("FOUND:", messages.length);
+
+    // console.log(message);
 
     const response = messages.map((msg) => ({
       id: msg._id.toString(),
@@ -27,6 +31,14 @@ export class MessageService {
       message: msg.message,
       createdAt: msg.createdAt.toISOString(),
     }));
+
+    // console.log("currentUserId:", currentUserId, typeof currentUserId)
+    // console.log("otherUserId:", otherUserId, typeof otherUserId)
+
+    // console.log("QUERY", sender, receiver);
+    // console.log("FOUND", messages.length);
+
+    // console.log(response);
 
     return getMessagesResponseSchema.parse(response);
   }

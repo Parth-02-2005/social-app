@@ -1,5 +1,5 @@
 import { User } from "@/models/user.model.js";
-import { ApiError } from "../../utils/apiError.js";
+import { ApiError } from "../utils/apiError.js";
 import { getCurrentUserResponseSchema } from "@/schema/user.schema.js";
 
 export class UserService {

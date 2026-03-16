@@ -2,6 +2,7 @@ import MessageList from "./MessageList"
 import MessageInput from "./MessageInput"
 import { getSocket, connectSocket } from "@/lib/socket"
 import { useEffect, useState, useRef } from "react"
+import { getUserChatHistory } from "#/lib/api"
 
 type Props = {
   selectedUser: any
@@ -35,33 +36,107 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
   }, [currentUser])
 
   // Messaging Logic
+  // useEffect(() => {
+  //   if (!currentUser || !selectedUser) return
+
+  //   const myId = currentUser.id || currentUser._id
+  //   const theirId = selectedUser.id || selectedUser._id
+
+  //   // Join room for these two users
+  //   const joinRoom = () => {
+  //     socket.emit("join_chat", { senderId: myId, receiverId: theirId })
+  //   }
+
+  //   if (socket.connected) joinRoom()
+  //   else socket.once("connect", joinRoom)
+
+  //   // Receive handler
+  //   const handleReceive = (payload: any) => {
+  //     const sender = payload.senderId.toString()
+  //     const receiver = payload.receiverId.toString()
+
+  //     const me = myId.toString()
+  //     const them = theirId.toString()
+
+  //     const isRelevant =
+  //       (sender === me && receiver === them) ||
+  //       (sender === them && receiver === me)
+
+  //     if (isRelevant) {
+  //     setMessages(prev => {
+  //       if (prev.find(m => m.id === payload.id)) return prev
+
+  //       return [
+  //         ...prev,
+  //         {
+  //           id: payload.id,
+  //           text: payload.message,
+  //           senderId: sender,
+  //           time: new Date(payload.createdAt).toLocaleTimeString([], {
+  //             hour: "2-digit",
+  //             minute: "2-digit",
+  //           }),
+  //         },
+  //       ]
+  //     })
+  //   }
+  //   }
+
+  //   socket.on("receive_message", handleReceive)
+  //   setMessages([]) // Reset on user change
+
+  //   return () => {
+  //     socket.off("receive_message", handleReceive)
+  //   }
+  // }, [selectedUser, currentUser])
+
   useEffect(() => {
-    if (!currentUser || !selectedUser) return
+  if (!currentUser || !selectedUser) return
 
-    const myId = currentUser.id || currentUser._id
-    const theirId = selectedUser.id || selectedUser._id
+  const myId = currentUser.id || currentUser._id
+  const theirId = selectedUser.id || selectedUser._id
 
-    // Join room for these two users
-    const joinRoom = () => {
-      socket.emit("join_chat", { senderId: myId, receiverId: theirId })
+  const fetchMessages = async () => {
+    try {
+      const data = await getUserChatHistory(theirId);
+
+      const formatted = data.map((msg: any) => ({
+        id: msg._id,
+        text: msg.message,
+        senderId: msg.senderId,
+        time: new Date(msg.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      }))
+
+      setMessages(formatted)
+    } catch (err) {
+      console.error("Failed to load messages", err)
     }
+  }
 
-    if (socket.connected) joinRoom()
-    else socket.once("connect", joinRoom)
+  fetchMessages()
 
-    // Receive handler
-    const handleReceive = (payload: any) => {
-      const sender = payload.senderId.toString()
-      const receiver = payload.receiverId.toString()
+  const joinRoom = () => {
+    socket.emit("join_chat", { senderId: myId, receiverId: theirId })
+  }
 
-      const me = myId.toString()
-      const them = theirId.toString()
+  if (socket.connected) joinRoom()
+  else socket.once("connect", joinRoom)
 
-      const isRelevant =
-        (sender === me && receiver === them) ||
-        (sender === them && receiver === me)
+  const handleReceive = (payload: any) => {
+    const sender = payload.senderId.toString()
+    const receiver = payload.receiverId.toString()
 
-      if (isRelevant) {
+    const me = myId.toString()
+    const them = theirId.toString()
+
+    const isRelevant =
+      (sender === me && receiver === them) ||
+      (sender === them && receiver === me)
+
+    if (isRelevant) {
       setMessages(prev => {
         if (prev.find(m => m.id === payload.id)) return prev
 
@@ -79,15 +154,15 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
         ]
       })
     }
-    }
+  }
 
-    socket.on("receive_message", handleReceive)
-    setMessages([]) // Reset on user change
+  socket.on("receive_message", handleReceive)
 
-    return () => {
-      socket.off("receive_message", handleReceive)
-    }
-  }, [selectedUser, currentUser])
+  return () => {
+    socket.off("receive_message", handleReceive)
+  }
+
+}, [selectedUser, currentUser])
 
   // Scroll to bottom
   useEffect(() => {

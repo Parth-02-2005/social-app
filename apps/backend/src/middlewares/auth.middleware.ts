@@ -1,7 +1,7 @@
 import { type Context, type Next } from "hono";
 import jwt  from "jsonwebtoken"
 import { getCookie } from "hono/cookie";
-import { ApiError } from "../../utils/apiError.js";
+import { ApiError } from "../utils/apiError.js";
 
 export const authMiddleware  = async (c: Context, next: Next) => {
     const token = getCookie(c,"token");
@@ -22,6 +22,7 @@ export const authMiddleware  = async (c: Context, next: Next) => {
         const decoded = jwt.verify(token,secret) as { userId: string };
 
         c.set("userId", decoded.userId);
+        console.log("Decoded user:", decoded.userId)
 
         await next();
     } catch (error) {

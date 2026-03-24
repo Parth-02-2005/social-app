@@ -13,7 +13,7 @@ export const getSocket = (): Socket => {
       withCredentials: true,
     })
 
-    // Debug logs
+    // logs
     socket.on("connect", () => {
       console.log("Socket connected:", socket?.id)
     })

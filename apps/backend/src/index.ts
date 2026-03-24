@@ -7,8 +7,6 @@ import { connectMongo } from './config/mongo.config.js';
 import { Server } from 'socket.io';
 import { registerChatSocket } from "./socket/socket.js";
 import { cors } from "hono/cors";
-import type { Server as HTTPServer } from "node:http";
-import { messageQueue } from './queues/message.queue.js';
 
 const PORT = process.env.PORT || 5000;
 const app = new OpenAPIHono();
@@ -44,16 +42,12 @@ const httpServer = serve({
   
 });
 
-const io = new Server(httpServer as HTTPServer, {
+const io = new Server(httpServer, {
   cors: {
     origin: ["http://localhost:3000", "http://localhost:5173"],
     credentials: true,
   },
 })
-
-// await messageQueue.add("test-job", {
-//   message: "Hello Queue",
-// });
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id)

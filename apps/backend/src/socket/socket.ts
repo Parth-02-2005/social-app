@@ -12,6 +12,8 @@ type MessagePayload = {
   senderId: string
   receiverId: string
   message: string
+  fileUrl: string | null    
+  fileType: string | null
   createdAt: string
 }
 
@@ -33,6 +35,7 @@ export const registerChatSocket = (io: Server) => {
 
   queueEvents.on("completed", ({ returnvalue }) => {
 
+    console.log(returnvalue);
     
       const payload: MessagePayload =
     typeof returnvalue === "string"
@@ -58,18 +61,8 @@ export const registerChatSocket = (io: Server) => {
 
     console.log(`User connected: ${socket.userId}`);
 
-    // Join a private room for 1:1 chat
-
-    // socket.on("join_chat", async ({ senderId, receiverId }) => {
-    //   console.log("senderId", senderId);
-    //   console.log("receiverId", receiverId);
-    //   const roomId = await getChatRoomId(senderId, receiverId);
-    //   console.log("JOIN ROOM:", roomId)
-    //   socket.join(roomId);
-    // });
-
     // Handle sending messages
-    socket.on("send_message", async ({ receiverId, message }) => {
+    socket.on("send_message", async ({ receiverId, message, fileUrl, fileType }) => {
       // const roomId = getChatRoomId(senderId, receiverId);
 
       const senderId = socket.userId
@@ -81,31 +74,11 @@ export const registerChatSocket = (io: Server) => {
       await messageQueue.add("send_message", {
         senderId,
         receiverId,
-        message
+        message,
+        fileUrl: fileUrl || null,
+        fileType: fileType || null,
       })
-
-    //   try {
-    //     const newMessage = await Message.create({ senderId, receiverId, message });
-
-    //     const payload = {
-    //       id: newMessage._id.toString(),
-    //       senderId,
-    //       receiverId,
-    //       message,
-    //       createdAt: newMessage.createdAt,
-    //     };
-
-    //     // Broadcast to both users in the room
-    //     io.to(roomId).emit("receive_message", payload);
-
-    //   } catch (error) {
-    //     console.error("Socket Error (send_message):", error);
-    //   }
     });
-
-    // socket.on("receive_message", (payload) => {
-    //   console.log("RECEIVED:", payload)
-    // })
 
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${socket.userId}`);

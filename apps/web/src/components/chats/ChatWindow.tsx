@@ -24,6 +24,7 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
     const handleConnect = () => setIsConnected(true)
     const handleDisconnect = () => setIsConnected(false)
 
+
     socket.on("connect", handleConnect)
     socket.on("disconnect", handleDisconnect)
 
@@ -36,59 +37,6 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
   }, [currentUser])
 
   // Messaging Logic
-  // useEffect(() => {
-  //   if (!currentUser || !selectedUser) return
-
-  //   const myId = currentUser.id || currentUser._id
-  //   const theirId = selectedUser.id || selectedUser._id
-
-  //   // Join room for these two users
-  //   const joinRoom = () => {
-  //     socket.emit("join_chat", { senderId: myId, receiverId: theirId })
-  //   }
-
-  //   if (socket.connected) joinRoom()
-  //   else socket.once("connect", joinRoom)
-
-  //   // Receive handler
-  //   const handleReceive = (payload: any) => {
-  //     const sender = payload.senderId.toString()
-  //     const receiver = payload.receiverId.toString()
-
-  //     const me = myId.toString()
-  //     const them = theirId.toString()
-
-  //     const isRelevant =
-  //       (sender === me && receiver === them) ||
-  //       (sender === them && receiver === me)
-
-  //     if (isRelevant) {
-  //     setMessages(prev => {
-  //       if (prev.find(m => m.id === payload.id)) return prev
-
-  //       return [
-  //         ...prev,
-  //         {
-  //           id: payload.id,
-  //           text: payload.message,
-  //           senderId: sender,
-  //           time: new Date(payload.createdAt).toLocaleTimeString([], {
-  //             hour: "2-digit",
-  //             minute: "2-digit",
-  //           }),
-  //         },
-  //       ]
-  //     })
-  //   }
-  //   }
-
-  //   socket.on("receive_message", handleReceive)
-  //   setMessages([]) // Reset on user change
-
-  //   return () => {
-  //     socket.off("receive_message", handleReceive)
-  //   }
-  // }, [selectedUser, currentUser])
 
   useEffect(() => {
   if (!currentUser || !selectedUser) return
@@ -104,6 +52,8 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
         id: msg._id,
         text: msg.message,
         senderId: msg.senderId,
+        fileUrl: msg.fileUrl ?? null,
+        fileType: msg.fileType ?? null,
         time: new Date(msg.createdAt).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
@@ -117,13 +67,6 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
   }
 
   fetchMessages()
-
-  const joinRoom = () => {
-    socket.emit("join_chat", { senderId: myId, receiverId: theirId })
-  }
-
-  if (socket.connected) joinRoom()
-  else socket.once("connect", joinRoom)
 
   const handleReceive = (payload: any) => {
     const sender = payload.senderId.toString()
@@ -146,6 +89,8 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
             id: payload.id,
             text: payload.message,
             senderId: sender,
+            fileUrl: payload.fileUrl ?? null,
+            fileType: payload.fileType ?? null,
             time: new Date(payload.createdAt).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -196,7 +141,7 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
       </header>
 
       <div className="flex-1 overflow-hidden flex flex-col relative">
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 [scrollbar-width:none]">
           <MessageList messages={messages} currentUserId={currentUser?.id || currentUser?._id} />
         </div>
       </div>

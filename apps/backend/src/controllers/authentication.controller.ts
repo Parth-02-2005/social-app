@@ -10,7 +10,6 @@ const authenticationService = new AuthenticationService();
 authenticationRouter.openapi({
   method: "post",
   tags: ["Auth"],
-  // middleware: [authMiddleware],
   path: "/login",
   request: {
     body: {
@@ -41,10 +40,10 @@ authenticationRouter.openapi({
 
   setCookie(c, "token", token, {
     httpOnly: true,
-    secure: false, // true in production (HTTPS)
+    secure: false, 
     sameSite: "Lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7 // 7 days
+    maxAge: 60 * 60 * 24 * 7 
   });
 
   return c.json(result, 200);

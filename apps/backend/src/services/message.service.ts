@@ -29,6 +29,8 @@ export class MessageService {
       senderId: msg.senderId.toString(),
       receiverId: msg.receiverId.toString(),
       message: msg.message,
+      fileUrl: msg.fileUrl ?? null,        // ← add
+      fileType: msg.fileType ?? null, 
       createdAt: msg.createdAt.toISOString(),
     }));
 

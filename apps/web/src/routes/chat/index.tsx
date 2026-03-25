@@ -28,16 +28,23 @@ function ChatPage() {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
 
-  useEffect(() => {
+
+     useEffect(() => {
     try {
       const userStr = localStorage.getItem("user")
       if (userStr && userStr !== "undefined" && userStr !== "null") {
-        setCurrentUser(JSON.parse(userStr)) 
+        const parsed = JSON.parse(userStr)
+        setCurrentUser({
+          id: parsed.id || parsed._id,
+          userName: parsed.userName,
+          email: parsed.email
+        })
       }
     } catch (e) {
       console.error("Failed to parse current user session", e)
     }
   }, [])
+
 
   return (
     <div className="h-full w-full overflow-hidden rise-in">

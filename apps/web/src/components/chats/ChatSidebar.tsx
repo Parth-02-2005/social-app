@@ -11,8 +11,14 @@ export default function ChatSidebar({ onSelectUser, activeUserId }: Props) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [currentUser, setCurrentUser] = useState<{ userName: string; email: string } | null>(null)
 
   useEffect(() => {
+    const getuser = localStorage.getItem('user');
+    if(getuser) {
+      const me = JSON.parse(getuser);  
+      setCurrentUser(me);
+    }
     const fetchUsers = async () => {
       try {
         setError(null)
@@ -42,6 +48,9 @@ export default function ChatSidebar({ onSelectUser, activeUserId }: Props) {
 
   return (
     <div className="w-80 h-full flex flex-col bg-[var(--surface-strong)] border-r border-[var(--line)] overflow-hidden">
+
+      
+
       <div className="p-6 bg-[var(--surface)] border-b border-[var(--line)]">
         <h2 className="display-title text-2xl font-bold text-[var(--sea-ink)]">Messages</h2>
         <input
@@ -83,6 +92,19 @@ export default function ChatSidebar({ onSelectUser, activeUserId }: Props) {
           <p className="p-8 text-center text-[var(--sea-ink-soft)] text-sm italic">No users found</p>
         )}
       </div>
+
+      {currentUser && (
+        <div className="px-6 py-4 bg-[var(--surface)] border-b border-[var(--line)] flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--lagoon)] to-[var(--lagoon-deep)] flex items-center justify-center text-white font-bold text-sm shrink-0">
+            {currentUser.userName?.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <p className="font-bold text-[var(--sea-ink)] text-sm truncate">{currentUser.userName}</p>
+            <p className="text-xs text-[var(--sea-ink-soft)] truncate">{currentUser.email}</p>
+          </div>
+          <div className="w-2 h-2 rounded-full bg-green-400 shrink-0" />  {/* online dot */}
+        </div>
+      )}
     </div>
   )
 }

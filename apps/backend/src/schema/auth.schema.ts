@@ -37,13 +37,32 @@ export const registerResponseSchema = z.object({
     updatedAt: z.string().datetime(),
 });
 
-export const responseSchema = z.object({
-    id: z.string(),
-    userName: z.string(),
-    email: z.email(),
-})
+export const googleCallbackQuerySchema = z.object({
+  code: z.string(),
+  state: z.string()
+});
+
+export const googleAuthResponseSchema = z.object({
+  id: z.string(),
+  userName: z.string(),
+  email: z.string().email(),
+});
+
+export const errorResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  statusCode: z.number(),
+});
+// export const responseSchema = z.object({
+//     id: z.string(),
+//     userName: z.string(),
+//     email: z.email(),
+// })
 
 export type RegisterBody = z.infer<typeof registerSchemaBody>;
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
 export type LoginBody = z.infer<typeof loginSchemaBody>;
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
+export type GoogleAuthResponse = z.infer<typeof googleAuthResponseSchema>;
+export type GoogleAuthBody = z.infer<typeof googleCallbackQuerySchema>;
+export type ErrorResponse = z.infer<typeof errorResponseSchema>;

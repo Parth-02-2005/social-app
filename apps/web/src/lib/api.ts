@@ -52,6 +52,20 @@ export const getAllUsers = async () => {
   }
 }
 
+export const googleLogin = () => {
+  // simple redirect — no axios needed, browser navigates directly
+  window.location.href = "http://localhost:5000/api/v1/auth/google"
+}
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await api.get("/users/me")
+    return response.data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || "Failed to fetch user")
+  }
+}
+
 export const getUserChatHistory = async (otherUserId: string) => {
   try {
     const response = await api.get(`/messages/${otherUserId}`)

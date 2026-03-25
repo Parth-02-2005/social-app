@@ -24,7 +24,7 @@ export default function MessageList({ messages, currentUserId }: Props) {
           const isMe = msg.senderId === currentUserId
           return (
             <div
-              key={msg.id}
+              key={msg.id || index}
               className={`flex flex-col ${isMe ? "items-end" : "items-start"} rise-in`}
               style={{ animationDelay: `${index * 50}ms` }}
             >

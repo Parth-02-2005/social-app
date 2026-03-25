@@ -15,7 +15,7 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
   const [messages, setMessages] = useState<any[]>([])
   const [isConnected, setIsConnected] = useState(socket.connected)
   const scrollRef = useRef<HTMLDivElement>(null)
-  
+
 
   // Socket Connection
   useEffect(() => {
@@ -39,75 +39,75 @@ export default function ChatWindow({ selectedUser, currentUser }: Props) {
   // Messaging Logic
 
   useEffect(() => {
-  if (!currentUser || !selectedUser) return
+    if (!currentUser || !selectedUser) return
 
-  const myId = currentUser.id || currentUser._id
-  const theirId = selectedUser.id || selectedUser._id
+    const myId = currentUser.id || currentUser._id
+    const theirId = selectedUser.id || selectedUser._id
 
-  const fetchMessages = async () => {
-    try {
-      const data = await getUserChatHistory(theirId);
+    const fetchMessages = async () => {
+      try {
+        const data = await getUserChatHistory(theirId);
 
-      const formatted = data.map((msg: any) => ({
-        id: msg._id,
-        text: msg.message,
-        senderId: msg.senderId,
-        fileUrl: msg.fileUrl ?? null,
-        fileType: msg.fileType ?? null,
-        time: new Date(msg.createdAt).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      }))
+        const formatted = data.map((msg: any) => ({
+          id: msg._id,
+          text: msg.message,
+          senderId: msg.senderId,
+          fileUrl: msg.fileUrl ?? null,
+          fileType: msg.fileType ?? null,
+          time: new Date(msg.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        }))
 
-      setMessages(formatted)
-    } catch (err) {
-      console.error("Failed to load messages", err)
+        setMessages(formatted)
+      } catch (err) {
+        console.error("Failed to load messages", err)
+      }
     }
-  }
 
-  fetchMessages()
+    fetchMessages()
 
-  const handleReceive = (payload: any) => {
-    const sender = payload.senderId.toString()
-    const receiver = payload.receiverId.toString()
+    const handleReceive = (payload: any) => {
+      const sender = payload.senderId.toString()
+      const receiver = payload.receiverId.toString()
 
-    const me = myId.toString()
-    const them = theirId.toString()
+      const me = myId.toString()
+      const them = theirId.toString()
 
-    const isRelevant =
-      (sender === me && receiver === them) ||
-      (sender === them && receiver === me)
+      const isRelevant =
+        (sender === me && receiver === them) ||
+        (sender === them && receiver === me)
 
-    if (isRelevant) {
-      setMessages(prev => {
-        if (prev.find(m => m.id === payload.id)) return prev
+      if (isRelevant) {
+        setMessages(prev => {
+          if (prev.find(m => m.id === payload.id)) return prev
 
-        return [
-          ...prev,
-          {
-            id: payload.id,
-            text: payload.message,
-            senderId: sender,
-            fileUrl: payload.fileUrl ?? null,
-            fileType: payload.fileType ?? null,
-            time: new Date(payload.createdAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          },
-        ]
-      })
+          return [
+            ...prev,
+            {
+              id: payload.id,
+              text: payload.message,
+              senderId: sender,
+              fileUrl: payload.fileUrl ?? null,
+              fileType: payload.fileType ?? null,
+              time: new Date(payload.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            },
+          ]
+        })
+      }
     }
-  }
 
-  socket.on("receive_message", handleReceive)
+    socket.on("receive_message", handleReceive)
 
-  return () => {
-    socket.off("receive_message", handleReceive)
-  }
+    return () => {
+      socket.off("receive_message", handleReceive)
+    }
 
-}, [selectedUser, currentUser])
+  }, [selectedUser, currentUser])
 
   // Scroll to bottom
   useEffect(() => {

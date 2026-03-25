@@ -34,6 +34,8 @@ export const connectSocket = () => {
   const token = localStorage.getItem("token")
   const socket = getSocket()
 
+  console.log("Connecting socket with token:", token)
+
   if (!token) {
     console.warn("No token found, socket not connected")
     return

@@ -49,7 +49,7 @@ function ChatPage() {
   return (
     <div className="h-full w-full overflow-hidden rise-in">
       <ChatLayout
-        sidebar={<ChatSidebar onSelectUser={setSelectedUser} activeUserId={selectedUser?.id} />}
+        sidebar={<ChatSidebar onSelectUser={setSelectedUser} activeUserId={selectedUser?.id} currentUser={currentUser}/>}
         chat={<ChatWindow selectedUser={selectedUser} currentUser={currentUser} />}
       />
     </div>

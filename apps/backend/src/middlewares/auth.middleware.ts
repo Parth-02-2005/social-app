@@ -4,6 +4,7 @@ import { getCookie } from "hono/cookie";
 import { ApiError } from "../utils/apiError.js";
 
 export const authMiddleware  = async (c: Context, next: Next) => {
+    
     const token = getCookie(c,"token");
 
     // console.log(token);

@@ -53,11 +53,7 @@ export const errorResponseSchema = z.object({
   message: z.string(),
   statusCode: z.number(),
 });
-// export const responseSchema = z.object({
-//     id: z.string(),
-//     userName: z.string(),
-//     email: z.email(),
-// })
+
 
 export type RegisterBody = z.infer<typeof registerSchemaBody>;
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;

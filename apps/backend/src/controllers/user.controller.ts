@@ -34,7 +34,6 @@ userRouter.openapi(
   }
 );
 
-
 userRouter.openapi({
     method: "get",
     path: "/",
